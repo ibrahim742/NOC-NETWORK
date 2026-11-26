@@ -1,83 +1,78 @@
-# 🖥️ NOC Network Monitoring Utility
+# 🖥️ NOC Network Monitoring
 
-Aplikasi utilitas **Network Operations Center (NOC)** berbasis **Python** yang dikemas menjadi file *executable* mandiri (`.exe`) untuk memantau status konektivitas dan kesehatan perangkat jaringan secara *real-time* pada lingkungan operasional maupun jaringan lokal (VLAN).
+Aplikasi utilitas **Network Operations Center (NOC)** berbasis **Python** yang dikemas menjadi file *executable* mandiri (`.exe`) untuk memantau konektivitas jaringan secara *real-time* pada lingkungan operasional dan jaringan lokal (VLAN).
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows_x64-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Build](https://img.shields.io/badge/Packaged-PyInstaller_(.exe)-0F172A?style=for-the-badge&logo=python&logoColor=38BDF8)
-![Status](https://img.shields.io/badge/Status-Production_Ready-10B981?style=for-the-badge)
+![Packaged](https://img.shields.io/badge/Build-PyInstaller_(.exe)-0F172A?style=for-the-badge&logo=python&logoColor=38BDF8)
+![Repository](https://img.shields.io/badge/GitHub-ibrahim742/NOC--NETWORK-181717?style=for-the-badge&logo=github&logoColor=white)
 
 ---
 
 ## ✨ Fitur Utama
 
-- **Pemantauan Status Jaringan *Real-Time*:** Memeriksa status *reachability* / latensi host, IP, atau layanan target secara berkala.
-- **Indikator Status Visual:** Membedakan kondisi *online*, *degraded* / latensi tinggi, dan *offline* / *unreachable* agar anomali cepat terlihat.
-- **Siap Dijalankan Tanpa Instalasi Python:** Dikemas menjadi *standalone* `.exe` sehingga mudah didistribusikan ke workstation operasional.
-- **Konfigurasi Fleksibel:** Pengaturan daftar target, *timeout*, dan interval pengecekan dapat disesuaikan tanpa perlu mengubah kode sumber.
-- **Log & Riwayat Kejadian:** Mencatat perubahan status atau gangguan untuk mempermudah *troubleshooting* dan pelaporan *shift*.
-- **Pembaruan Terkelola:** Mendukung pembaruan versi aplikasi melalui repositori GitHub.
+- **Pemantauan Konektivitas *Real-Time*:** Memeriksa status host dan perangkat jaringan di daftar host serta *subnet* secara berkelanjutan.
+- **Manual Ping:** Melakukan pengujian *ping* manual langsung ke IP atau *host* tertentu saat melakukan *troubleshooting* cepat.
+- **Deteksi & Alert RTO (*Request Time Out*):** Menandai dan memberi peringatan ketika *host* mengalami *Request Time Out* atau kehilangan respons.
+- **Konfigurasi Host & *Subnet*:** Pengelolaan target *host* dan *subnet* yang dipantau agar mudah disesuaikan dengan topologi jaringan lokal.
+- **Standalone Windows `.exe`:** Dapat dijalankan di *workstation* operasional tanpa perlu menginstal Python terlebih dahulu.
+- **Pembaruan via GitHub:** Mendukung pengecekan/pembaruan versi aplikasi dari repositori GitHub.
 
 ---
 
-## 🏗️ Arsitektur & Alur Kerja
+## 🏗️ Alur Kerja Pemantauan
 
 ```text
-+--------------------+      ICMP / TCP / HTTP      +-----------------------+
-|  NOC Utility.exe   | ----------------------------> |  Target Hosts / Nodes |
-|  (Python Runtime)  | <---------------------------- |  (Router / Switch /   |
-+--------------------+      Response & Latency       |   Server / VLAN IP)   |
-         |                                           +-----------------------+
-         v
-+--------------------+
-| Status & Event Log |
-| (UI / Console /    |
-|  Config & Update)  |
-+--------------------+
++-----------------------------------+
+|      NOC Network Monitor (.exe)   |
+|      (noc-monitoring-network)     |
++-----------------------------------+
+        |                       ^
+        | Ping / Cek Status     | Status & RTO Alert
+        v                       |
++-----------------------------------+
+|    Daftar Host & Subnet (VLAN)    |
++-----------------------------------+
+        |
+        +---> Manual Ping (On-Demand Troubleshooting)
+        +---> GitHub Update Check (Pembaruan Rilis)
 ```
 
 ---
 
-## 📦 Penggunaan (End User `.exe`)
+## 📦 Penggunaan (`.exe`)
 
-1. Unduh paket rilis terbaru (`.exe`) dari halaman **Releases** repositori ini.
-2. Letakkan file `.exe` pada direktori kerja yang diinginkan (misalnya `C:\NOC-Monitor\` atau folder lokal operasional).
-3. Siapkan file konfigurasi (jika menggunakan konfigurasi eksternal, misalnya `config.json` atau `.env`) sesuai format yang disediakan.
-4. Jalankan file `.exe` (disarankan menjalankan sebagai *Administrator* bila pemeriksaan jaringan memerlukannya).
+1. Unduh atau salin file `.exe` hasil *build* ke folder kerja di *workstation* (misalnya pada jaringan lokal / VLAN).
+2. Pastikan konfigurasi daftar *host* dan *subnet* sudah sesuai dengan segmen jaringan yang dipantau.
+3. Jalankan file `.exe` untuk memulai pemantauan konektivitas *real-time* maupun menjalankan *manual ping* saat diperlukan.
+4. Pantau indikator status dan *alert* **RTO** apabila ada perangkat atau *link* yang tidak merespons.
 
 ---
 
-## 🛠️ Pengembangan & Build `.exe` (Developer)
+## 🛠️ Pengembangan & Build `.exe`
 
-### Prasyarat
-- **Python 3.10+**
-- **pip** & **virtualenv** (disarankan)
-- **PyInstaller**
-
-### 1. Clone Repositori & Siapkan Environment
+### 1. Clone Repositori
 ```bash
 git clone [https://github.com/ibrahim742/NOC-NETWORK.git](https://github.com/ibrahim742/NOC-NETWORK.git)
 cd NOC-NETWORK
+```
+
+### 2. Siapkan Environment & Jalankan Script
+```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 pip install pyinstaller
+python noc-monitoring-network.py
 ```
-
-### 2. Jalankan dari Source Code
-```bash
-python main.py
-```
-*(Sesuaikan `main.py` dengan nama entrypoint utama pada proyekmu.)*
 
 ### 3. Build Menjadi File `.exe`
-Build single-file executable:
 ```bash
-pyinstaller --noconfirm --onefile --name "NOC-Network-Monitor" main.py
+pyinstaller --noconfirm --onefile --name "NOC-Network-Monitor" noc-monitoring-network.py
 ```
-*(Jika aplikasi memakai antarmuka GUI tanpa jendela konsol hitam, tambahkan flag `--noconsole` atau `--windowed`.)*
+*(Tambahkan `--noconsole` bila antarmuka aplikasi berjalan dalam mode GUI tanpa jendela terminal terpisah.)*
 
-Hasil file `.exe` akan tersedia di folder `dist\NOC-Network-Monitor.exe`.
+File *executable* hasil kompilasi akan berada di folder `dist\NOC-Network-Monitor.exe`.
 
 ---
 
@@ -85,22 +80,20 @@ Hasil file `.exe` akan tersedia di folder `dist\NOC-Network-Monitor.exe`.
 
 ```text
 NOC-NETWORK/
-├── dist/               # Hasil build executable (.exe)
-├── build/              # File sementara proses build PyInstaller
-├── config/             # Contoh konfigurasi / daftar target host
-├── logs/               # Penyimpanan log aktivitas & status jaringan
-├── main.py             # Entrypoint utama aplikasi
-├── requirements.txt    # Daftar dependensi Python
-└── README.md           # Dokumentasi proyek
+├── dist/                        # Hasil build executable (.exe)
+├── build/                       # File sementara proses PyInstaller
+├── noc-monitoring-network.py    # Script utama aplikasi monitoring jaringan
+├── requirements.txt             # Dependensi Python
+└── README.md                    # Dokumentasi proyek
 ```
 
 ---
 
-## 🔒 Catatan Operasional & Keamanan
+## 🔒 Catatan Operasional
 
-- Pastikan aturan *firewall* dan kebijakan jaringan internal mengizinkan lalu lintas pemeriksaan dari host tempat `.exe` dijalankan.
-- Hindari menyimpan kredensial sensitif atau *token* secara *hardcoded* di dalam kode sumber maupun file konfigurasi publik.
-- Lakukan pengujian pada lingkungan *staging* atau jaringan uji sebelum mengganti *binary* `.exe` di *workstation* aktif.
+- Pastikan izin *firewall* dan akses jaringan pada VLAN/subnet tujuan terbuka untuk paket *ping*/pemeriksaan.
+- Uji terlebih dahulu rilis `.exe` baru sebelum mengganti *binary* yang sedang dipakai di meja operasional.
+- Gunakan *manual ping* untuk memastikan apakah gangguan bersifat *Request Time Out* sesaat, masalah *routing*/*subnet*, atau *down* pada perangkat tujuan.
 
 ---
 
